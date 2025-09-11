@@ -4,7 +4,8 @@
 #include "geometrycentral/surface/surface_mesh_factories.h"
 
 #include "signed_heat_3d.h"
-#include <igl/marching_tets.h>
+// #include <igl/marching_tets.h>
+#include "marching_tets.h"
 
 #include <igl/collapse_edge.h>
 #include <igl/edge_flaps.h>
@@ -36,7 +37,7 @@ public:
                                    const SignedHeat3DOptions& options);
     
     void isosurface(std::unique_ptr<SurfaceMesh>& isoMesh, std::unique_ptr<VertexPositionGeometry>& isoGeom,
-                    const Vector<double>& phi, double isoval = 0.) const;
+                    const Vector<double>& phi, double isoval = 0., double isoval_eps = 0.) const;
     
 
     

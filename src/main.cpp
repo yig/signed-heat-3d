@@ -47,6 +47,7 @@ std::unique_ptr<geometrycentral::EdgeDualNormalGeometry> edgeGeometry;
 
 // Contouring
 float ISOVAL = 0.;
+float ISOVAL_EPS = 0.;
 Vector<double> PHI;
 std::unique_ptr<SurfaceMesh> isoMesh;
 std::unique_ptr<VertexPositionGeometry> isoGeom;
@@ -189,7 +190,7 @@ void solve() {
 //            ISOVAL = 0.001;  // 设置为 0
 
             // 直接使用 tetSolver 生成等值面，无需依赖 polyscope
-            tetSolver->isosurface(isoMesh, isoGeom, PHI, ISOVAL);
+            tetSolver->isosurface(isoMesh, isoGeom, PHI, ISOVAL, ISOVAL_EPS);
             
             // 检查是否成功生成网格
             if (isoMesh && isoGeom) {
@@ -204,7 +205,7 @@ void solve() {
 
 void contour() {
     if (LAST_SOLVER_MODE == MeshMode::Tet) {
-        tetSolver->isosurface(isoMesh, isoGeom, PHI, ISOVAL);
+        tetSolver->isosurface(isoMesh, isoGeom, PHI, ISOVAL, ISOVAL_EPS);
         polyscope::registerSurfaceMesh("isosurface", isoGeom->vertexPositions, isoMesh->getFaceVertexList());
         
     } else {
@@ -266,6 +267,12 @@ void callback() {
             contour();
         }
         if (ImGui::InputFloat("Contour (enter value)", &ISOVAL)) {
+            contour();
+        }
+        if (ImGui::SliderFloat("Contour topological perturbation (drag slider)", &ISOVAL_EPS, -0.1, 0.1)) {
+            contour();
+        }
+        if (ImGui::InputFloat("Contour topological perturbation (enter value)", &ISOVAL_EPS)) {
             contour();
         }
         if (CONTOURED) {

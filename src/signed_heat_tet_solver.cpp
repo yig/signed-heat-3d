@@ -885,13 +885,14 @@ SparseMatrix<double> SignedHeatTetSolver::buildAveragingMatrix() const {
 
 void SignedHeatTetSolver::isosurface(std::unique_ptr<SurfaceMesh>& isoMesh,
                                      std::unique_ptr<VertexPositionGeometry>& isoGeom, const Vector<double>& phi,
-                                     double isoval) const {
+                                     double isoval, double isoval_eps) const {
 
     Eigen::MatrixXd SV;
     Eigen::MatrixXi SF;
     Eigen::VectorXi J;
     Eigen::SparseMatrix<double> BC;
-    igl::marching_tets(vertices, tets, phi, isoval, SV, SF, J, BC);
+    std::cout << "ygl::marching_tets( " << isoval << ", " << isoval_eps << " )\n";
+    ygl::marching_tets(vertices, tets, phi, isoval, isoval_eps, SV, SF, J, BC);
 //    clean_zero_edges_simple(SV, SF);
     std::tie(isoMesh, isoGeom) = makeSurfaceMeshAndGeometry(SV, SF);
 }
@@ -1479,7 +1480,7 @@ Vector<double> SignedHeatTetSolver::computeDistance(EdgeDualNormalGeometry& edge
     }
 
     // 主计算循环
-    int maxIterations = 2;  // 你可以随意修改这个值
+    int maxIterations = 1;  // 你可以随意修改这个值
     int iteration = 0;
     Vector<double> phi;
     bool meshWasRefined = false;  // 跟踪是否进行了网格细分
